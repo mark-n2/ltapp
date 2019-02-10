@@ -1,5 +1,17 @@
 # ltapp
 
+This is web application checking how train/taxi/bus ride comfortable.
+
+## todo
+
++ [ ] getting sensor value from phone
++ [ ] calculate comfortable value
++ [ ] post comfortable value to SNS (twitter, facebook, ..etc)
++ [ ] store sensor values to Google Drive
++ [ ] analyze sensor values on Google Colab-Notebook
+
+# Develop
+
 ## Project setup
 ```
 yarn install

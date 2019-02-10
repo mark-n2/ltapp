@@ -10,6 +10,11 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'recording',
+      component: () => import('./views/Recording.vue')
+    },
+    {
+      path: '/home',
       name: 'home',
       component: Home
     },
