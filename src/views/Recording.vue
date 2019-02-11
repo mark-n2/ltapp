@@ -47,6 +47,16 @@
           <div class="font-weight-light title mb-2">
             Z: {{acc_z}}
           </div>
+          <h3 class="display-1 font-weight-light orange--text mb-2">Gyroscope</h3>
+          <div class="font-weight-light title mb-2">
+            beta: {{gyro_beta}}
+          </div>
+          <div class="font-weight-light title mb-2">
+            gamma: {{gyro_gamma}}
+          </div>
+          <div class="font-weight-light title mb-2">
+            alpha: {{gyro_alpha}}
+          </div>
         </v-card-text>
       </v-card>
     </v-hover>
@@ -57,29 +67,58 @@
 export default{
   data () {
     return {
-      acc_x : 0.0,
-      acc_y : 0.0,
-      acc_z : 0.0,
+      accelerometer: null,
+      acc_x: 0.0,
+      acc_y: 0.0,
+      acc_z: 0.0,
+      gyroscope: null,
       gyro_beta: 0.0,
       gyro_gamma: 0.0,
       gyro_alpha: 0.0
     }
   },
   methods: {
-    devicemotion (e) {
-      this.acc_x = e.acceleration.x
-      this.acc_y = e.acceleration.y
-      this.acc_z = e.acceleration.z
+    devicemotion () {
+      this.acc_x = this.accelerometer.x
+      this.acc_y = this.accelerometer.y
+      this.acc_z = this.accelerometer.z
     },
-    deviceorientation (e) {
-      this.gyro_beta = e.beta
-      this.gyro_gamma = e.gamma
-      this.gyro_alpha = e.alpha
+    deviceorientation () {
+      this.gyro_beta = this.gyroscope.x
+      this.gyro_gamma = this.gyroscope.y
+      this.gyro_alpha = this.gyroscope.z
     }
   },
   created () {
-    window.addEventListener('devicemotion', this.devicemotion)
-    window.addEventListener('deviceorientation', this.deviceorientation)
+    // eslint-disable-next-line
+    this.accelerometer = new Accelerometer({frequency: 200})
+    // eslint-disable-next-line
+    this.accelerometer.addEventListener('activate', (event) => {
+      console.log("加速度センサが有効になりました")
+    })
+    this.accelerometer.addEventListener('reading', this.devicemotion)
+    // eslint-disable-next-line
+    this.accelerometer.addEventListener('error', (event) => {
+      console.log("加速度センサでエラーが発生しました")
+      console.log(event.error)
+      this.accelerometer.stop()
+    })
+    this.accelerometer.start()
+    
+    // eslint-disable-next-line
+    this.gyroscope = new Gyroscope({frequency: 200})
+    // eslint-disable-next-line
+    this.gyroscope.addEventListener('activate', (event) => {
+      console.log("ジャイロスコープが有効になりました")
+    })
+    this.gyroscope.addEventListener('reading', this.deviceorientation)
+    // eslint-disable-next-line
+    this.gyroscope.addEventListener('error', (event) => {
+      console.log("ジャイロスコープでエラーが発生しました")
+      console.log(event.error)
+      this.gyroscope.stop()
+    })
+    this.gyroscope.start()
   }
 }
 </script>
