@@ -91,7 +91,7 @@ export default{
   },
   created () {
     // eslint-disable-next-line
-    this.accelerometer = new Accelerometer({frequency: 200})
+    this.accelerometer = new Accelerometer({frequency: 50})
     // eslint-disable-next-line
     this.accelerometer.addEventListener('activate', (event) => {
       console.log("加速度センサが有効になりました")
@@ -106,7 +106,7 @@ export default{
     this.accelerometer.start()
     
     // eslint-disable-next-line
-    this.gyroscope = new Gyroscope({frequency: 200})
+    this.gyroscope = new Gyroscope({frequency: 50})
     // eslint-disable-next-line
     this.gyroscope.addEventListener('activate', (event) => {
       console.log("ジャイロスコープが有効になりました")
