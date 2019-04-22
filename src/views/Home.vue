@@ -19,6 +19,7 @@
 
 <script>
 import Dexie from 'dexie'
+import loadWasm from '../../rust-lib/src/lib.rs'
 
 export default {
   name: 'home',
@@ -32,7 +33,8 @@ export default {
         { text: '加速度X', value: 'accX', sortable: false},
         { text: '加速度Y', value: 'accY', sortable: false},
         { text: '加速度Z', value: 'accZ', sortable: false}
-      ]
+      ],
+      calc: null
     }
   },
   methods: {
@@ -62,6 +64,12 @@ export default {
     this.db = new Dexie('AppDatabase')
     this.db.version(1).stores({
       notes: "++id, date, accX, accY, accZ"
+    })
+  },
+  beforeCreate() {
+    loadWasm().then(result => {
+      this.calc = result.instance.exports.add
+      console.log('return value was', this.calc(2,3))
     })
   }
 }
