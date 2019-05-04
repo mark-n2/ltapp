@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
+import Recording from './views/Recording.vue'
+import About from './views/About.vue'
+import DataViewer from './views/DataViewer.vue'
 
 Vue.use(Router)
 
@@ -10,21 +13,23 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'recording',
-      component: () => import('./views/Recording.vue')
-    },
-    {
-      path: '/home',
       name: 'home',
       component: Home
     },
     {
+      path: '/recording',
+      name: 'recording',
+      component: Recording
+    },
+    {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      component: About
+    },
+    {
+      path: '/viewer',
+      name: 'viewer',
+      component: DataViewer
     }
   ]
 })

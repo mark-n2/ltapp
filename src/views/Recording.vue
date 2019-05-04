@@ -1,83 +1,84 @@
 <template>
   <div class="recording">
-    <v-hover>
-      <v-card
-        slot-scope="{ hover }"
-        class="mx-auto"
-        color="grey lighten-4"
-        max-width="600"
-      >
-        <v-img
-          :aspect-ratio="16/9"
-          src="https://www.webtech.co.jp/blog/wp-content/uploads/2015/06/sensor.png"
-        >
-          <v-expand-transition>
-            <div
-              v-if="hover"
-              class="d-flex transition-fast-in-fast-out orange darken-2 v-card--reveal display-3 white--text"
-              style="height: 100%;"
-            >
-              $14.99
-            </div>
-          </v-expand-transition>
-        </v-img>
-        <v-card-text
-          class="pt-4"
-          style="position: relative;"
-        >
-          <v-btn
-            absolute
-            color="orange"
-            class="white--text"
-            fab
-            large
-            right
-            top
-          >
-            <v-icon>mdi-cart</v-icon>
-          </v-btn>
-          <div class="font-weight-light grey--text title mb-2">Recording Sensors</div>
-          <h3 class="display-1 font-weight-light orange--text mb-2">Acceleration</h3>
-          <v-sparkline :value="acc_x" color="primary"></v-sparkline>
-          <div class="font-weight-light title mb-2">
-            X: {{acc_x.slice(-1)[0]}}
-          </div>
-          <v-sparkline :value="acc_y" color="green"></v-sparkline>
-          <div class="font-weight-light title mb-2">
-            Y: {{acc_y.slice(-1)[0]}}
-          </div>
-          <v-sparkline :value="acc_z" color="red"></v-sparkline>
-          <div class="font-weight-light title mb-2">
-            Z: {{acc_z.slice(-1)[0]}}
-          </div>
-          <h3 class="display-1 font-weight-light orange--text mb-2">Gyroscope</h3>
-          <div class="font-weight-light title mb-2">
-            beta: {{gyro_beta}}
-          </div>
-          <div class="font-weight-light title mb-2">
-            gamma: {{gyro_gamma}}
-          </div>
-          <div class="font-weight-light title mb-2">
-            alpha: {{gyro_alpha}}
-          </div>
-        </v-card-text>
-      </v-card>
-    </v-hover>
+    <v-layout row>
+      <v-flex xs12 sm6 offset-sm3>
+        <v-card>
+          <v-toolbar dark>
+            <v-toolbar-side-icon>
+              <v-btn to="/">
+                <v-icon>navigate_before</v-icon>
+              </v-btn>
+            </v-toolbar-side-icon>
+            <v-toolbar-title>Recording Sensors</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-title>Record:</v-toolbar-title>
+            <v-btn-toggle v-model="record">
+              <v-btn icon @click="create_data()">
+                <v-icon color="red">album</v-icon>
+              </v-btn>
+            </v-btn-toggle>
+          </v-toolbar>
+          <v-card>
+            <v-card-title>
+              <h3>Acceleration</h3>
+            </v-card-title>
+            <v-card-text>
+              <v-sparkline :value="acc_x" color="primary"></v-sparkline>
+              <div>
+                X: {{acc_x.slice(-1)[0]}}
+              </div>
+              <v-sparkline :value="acc_y" color="green"></v-sparkline>
+              <div>
+                Y: {{acc_y.slice(-1)[0]}}
+              </div>
+              <v-sparkline :value="acc_z" color="red"></v-sparkline>
+              <div>
+                Z: {{acc_z.slice(-1)[0]}}
+              </div>
+            </v-card-text>
+          </v-card>
+          <v-card>
+            <v-card-title>
+              <h3>Gyroscope</h3>
+            </v-card-title>
+            <v-card-text>
+              <v-sparkline :value="gyro_beta" color="primary"></v-sparkline>
+              <div>
+                beta: {{gyro_beta.slice(-1)[0]}}
+              </div>
+              <v-sparkline :value="gyro_gamma" color="green"></v-sparkline>
+              <div>
+                gamma: {{gyro_gamma.slice(-1)[0]}}
+              </div>
+              <v-sparkline :value="gyro_alpha" color="red"></v-sparkline>
+              <div>
+                alpha: {{gyro_alpha.slice(-1)[0]}}
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-card>
+      </v-flex>
+    </v-layout>
   </div>
 </template>
 
 <script>
+import moment from 'moment'
 export default{
   data () {
     return {
+      db: null,
+      record: null,
+      number: -1,
+      timer: null,
       accelerometer: null,
       acc_x: [0.0],
       acc_y: [0.0],
       acc_z: [0.0],
       gyroscope: null,
-      gyro_beta: 0.0,
-      gyro_gamma: 0.0,
-      gyro_alpha: 0.0
+      gyro_beta: [0.0],
+      gyro_gamma: [0.0],
+      gyro_alpha: [0.0]
     }
   },
   methods: {
@@ -96,9 +97,51 @@ export default{
       }
     },
     deviceorientation () {
-      this.gyro_beta = this.gyroscope.x
-      this.gyro_gamma = this.gyroscope.y
-      this.gyro_alpha = this.gyroscope.z
+      this.gyro_beta.push(this.gyroscope.x)
+      if(this.gyro_beta.length > 1000){
+        this.gyro_beta.shift()
+      }
+      this.gyro_gamma.push(this.gyroscope.y)
+      if(this.gyro_gamma.length > 1000){
+        this.gyro_gamma.shift()
+      }
+      this.gyro_alpha.push(this.gyroscope.z)
+      if(this.gyro_alpha.length > 1000){
+        this.gyro_alpha.shift()
+      }
+    },
+    async create_data() {
+      if(this.record !== 0){
+        console.log('Start Recording!')
+        let now = new Date()
+        let now_str = moment(now).format('YYYY/MM/DD HH:mm:ss')
+        this.db.notes.add({
+          title: now_str, subtitle:now}
+        )
+        const number = await this.db.notes.orderBy('subtitle').reverse().limit(1).toArray()
+        this.number = number[0].id
+        this.timer = setInterval(this.add_data, 20)
+        this.add_data()
+      }else{
+        console.log('End Recording!')
+        clearInterval(this.timer)
+        this.timer = null
+      }
+    },
+    async add_data() {
+      if(this.record === 0) {
+        console.log('add data: ', this.number)
+        await this.db.data.add({
+          no: this.number,
+          date:new Date(),
+          accX:this.accelerometer.x,
+          accY:this.accelerometer.y,
+          accZ:this.accelerometer.z,
+          gyro_beta:this.gyroscope.x,
+          gyro_gamma:this.gyroscope.y,
+          gyro_alpha:this.gyroscope.z
+        })
+      }
     }
   },
   created () {
