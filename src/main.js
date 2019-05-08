@@ -16,7 +16,7 @@ const mixIn = {
     this.db = new Dexie('LtAppDb')
     this.db.version(1).stores({
       notes: "++id, title, subtitle",
-      data: "++id, no, date, accX, accY, accZ, gyroX, gyroY, gyroZ"
+      data: "++id, no, date, accX, accY, accZ, gyroX, gyroY, gyroZ, qW, qX, qY, qZ, lat, lon",
     })
   }
 }

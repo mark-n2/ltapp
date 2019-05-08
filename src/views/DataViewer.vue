@@ -29,6 +29,12 @@
 								<td>{{ props.item.gyro_beta }}</td>
 								<td>{{ props.item.gyro_gamma }}</td>
 								<td>{{ props.item.gyro_alpha }}</td>
+								<td>{{ props.item.qX }}</td>
+								<td>{{ props.item.qY }}</td>
+								<td>{{ props.item.qZ }}</td>
+								<td>{{ props.item.qW }}</td>
+								<td>{{ props.item.lat }}</td>
+								<td>{{ props.item.lon }}</td>
 							</template>
 						</v-data-table>
 					</v-card>
@@ -47,21 +53,27 @@ export default {
 		records: [],
 		headers: [
 				{ text:'date', value: 'date' },
-				{ text:'加速度X', value: 'accX'},
-				{ text:'加速度Y', value: 'accY'},
-				{ text:'加速度Z', value: 'accZ'},
-				{ text:'ジャイロX', value: 'gyro_beta'},
-				{ text:'ジャイロY', value: 'gyro_gamma'},
-				{ text:'ジャイロZ', value: 'gyro_alpha'},
+				{ text:'Acc X', value: 'accX'},
+				{ text:'Acc Y', value: 'accY'},
+				{ text:'Acc Z', value: 'accZ'},
+				{ text:'Gyro X', value: 'gyro_beta'},
+				{ text:'Gyro Y', value: 'gyro_gamma'},
+				{ text:'Gyro Z', value: 'gyro_alpha'},
+				{ text:'Q X', value: 'qX'},
+				{ text:'Q Y', value: 'qY'},
+				{ text:'Q Z', value: 'qZ'},
+				{ text:'Q Q', value: 'qW'},
+				{ text:'Latitude', value: 'lat'},
+				{ text:'Longitude', value: 'lon'}
 			]
 		}
 	},
 	methods: {
 		download () {
 			// CSVに保存
-			var csv = '\ufeff' + 'date,加速度X,加速度Y,加速度Z,ジャイロX,ジャイロY,ジャイロZ\n'
+			var csv = '\ufeff' + 'date,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,Qx,Qy,Qz,Qw,Lat,Lon\n'
 			this.records.forEach(el => {
-				var line = el['date'] + ',' + el['accX'] + ',' + el['accY'] + ',' + el['accZ'] + ',' + el['gyro_beta'] + ',' + el['gyro_gamma'] + ',' + el['gyro_alpha'] + '\n'
+				var line = el['date'] + ',' + el['accX'] + ',' + el['accY'] + ',' + el['accZ'] + ',' + el['gyro_beta'] + ',' + el['gyro_gamma'] + ',' + el['gyro_alpha'] + ',' + el['qX'] + ',' + el['qY'] + ',' + el['qZ'] + ',' + el['qW'] + ',' + el['lat'] + ',' + el['lon'] + '\n'
 				csv += line
 			})
 			if(navigator.share) {

@@ -13,7 +13,7 @@
             <v-spacer></v-spacer>
             <v-toolbar-title>Record:</v-toolbar-title>
             <v-btn-toggle v-model="record">
-              <v-btn icon @click="create_data()">
+              <v-btn icon @click="toggle_recording()">
                 <v-icon color="red">album</v-icon>
               </v-btn>
             </v-btn-toggle>
@@ -68,17 +68,22 @@ export default{
   data () {
     return {
       db: null,
-      record: null,
+      record: null, // 保存の有効/無効
       number: -1,
-      timer: null,
-      accelerometer: null,
+      timer: null,  // 周期処理ID
+      accelerometer: null,  // 加速度センサ
       acc_x: [0.0],
       acc_y: [0.0],
       acc_z: [0.0],
-      gyroscope: null,
+      gyroscope: null,  // ジャイロセンサ
       gyro_beta: [0.0],
       gyro_gamma: [0.0],
-      gyro_alpha: [0.0]
+      gyro_alpha: [0.0],
+      absoluteorient: null, // 絶対オリエンテーション
+      quaternion: [0.0,0.0,0.0,0.0],
+      position: null,  // GeoLocationAPIのID
+      lat: 0.0,
+      lon: 0.0
     }
   },
   methods: {
@@ -110,7 +115,10 @@ export default{
         this.gyro_alpha.shift()
       }
     },
-    async create_data() {
+    absoluteorientation () {
+      this.quaternion = this.absoluteorient.quaternion
+    },
+    async toggle_recording() {
       if(this.record !== 0){
         console.log('Start Recording!')
         let now = new Date()
@@ -121,16 +129,20 @@ export default{
         const number = await this.db.notes.orderBy('subtitle').reverse().limit(1).toArray()
         this.number = number[0].id
         this.timer = setInterval(this.add_data, 20)
+        this.get_position()
         this.add_data()
       }else{
         console.log('End Recording!')
         clearInterval(this.timer)
         this.timer = null
+        if(this.position){
+          navigator.geolocation.clearWatch(this.position)
+          this.position = null
+        }
       }
     },
     async add_data() {
       if(this.record === 0) {
-        console.log('add data: ', this.number)
         await this.db.data.add({
           no: this.number,
           date:new Date(),
@@ -139,8 +151,33 @@ export default{
           accZ:this.accelerometer.z,
           gyro_beta:this.gyroscope.x,
           gyro_gamma:this.gyroscope.y,
-          gyro_alpha:this.gyroscope.z
+          gyro_alpha:this.gyroscope.z,
+          qX: this.quaternion[0],
+          qY: this.quaternion[1],
+          qZ: this.quaternion[2],
+          qW: this.quaternion[3],
+          lat:this.lat,
+          lon:this.lon
         })
+        this.get_position()
+      }
+    },
+    async update_latlon(position) {
+      // GeoLocationAPIで位置を取得し緯度・経度を保持
+      this.lat = position.coords.latitude
+      this.lon = position.coords.longitude
+      navigator.geolocation.clearWatch(this.position)
+      this.position = null
+    },
+    get_position() {
+      // Getting Geolocation
+      if(navigator.geolocation) {
+        let option = {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 30000
+        }
+        this.position = navigator.geolocation.watchPosition(this.update_latlon, (error) => { console.log(error) }, option)
       }
     }
   },
@@ -174,6 +211,22 @@ export default{
       this.gyroscope.stop()
     })
     this.gyroscope.start()
+
+    // eslint-disable-next-line
+    this.absoluteorient = new AbsoluteOrientationSensor({frequency: 50})
+    // eslint-disable-next-line
+    this.absoluteorient.addEventListener('activate', (event) => {
+      console.log("絶対オリエンテーションセンサが有効になりました")
+    })
+    this.absoluteorient.addEventListener('reading', this.absoluteorientation)
+    this.absoluteorient.addEventListener('error', (event) => {
+      console.log("絶対オリエンテーションセンサでエラーが発生しました");
+      console.log(event.error)
+      this.absoluteorient.stop()
+    });
+    this.absoluteorient.start()
+
+    this.get_position()
   }
 }
 </script>

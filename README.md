@@ -1,16 +1,23 @@
 # ltapp
 
-This is web application checking how train/taxi/bus ride comfortable.
+This is web application checking how train/taxi/bus ride comfortable.  
+=>[Demo](https://mark-n2.github.io/ltapp)
 
 ## todo
 
-+ [ ] getting sensor value from phone
++ [x] getting sensor value from phone
++ [x] store sensor values to Google Drive
 + [ ] calculate comfortable value
 + [ ] post comfortable value to SNS (twitter, facebook, ..etc)
-+ [ ] store sensor values to Google Drive
 + [ ] analyze sensor values on Google Colab-Notebook
 
 # Develop
+
+## Requirements
+
+install below:
+* node/npm
+* rustup and add target **wasm32-unknown-unknown**
 
 ## Project setup
 ```
@@ -32,6 +39,11 @@ yarn run build
 yarn run test
 ```
 
+### Deploy to gh-pages
+```
+yarn run deploy
+```
+
 ### Lints and fixes files
 ```
 yarn run lint
@@ -46,6 +58,3 @@ yarn run test:e2e
 ```
 yarn run test:unit
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

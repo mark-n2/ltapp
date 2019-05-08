@@ -23,8 +23,8 @@
                   <v-list-tile-title>{{item.title}}</v-list-tile-title>
                   <v-list-tile-sub-title>{{item.subtitle}}</v-list-tile-sub-title>
                 </v-list-tile-content>
-                <v-list-tile-action>
-                  <v-btn icon @click="delete_by_id(item.id)">
+                <v-list-tile-action @click="delete_by_id(item.id)">
+                  <v-btn icon ripple>
                     <v-icon color="grey lighten-1">delete</v-icon>
                   </v-btn>
                 </v-list-tile-action>
@@ -41,11 +41,6 @@
     <v-navigation-drawer v-model="drawer" absolute temporary>
       <v-list class="pt-0" dense>
         <v-divider></v-divider>
-        <v-list-tile @click="add_test()">
-          <v-list-tile-content>
-            <v-list-tile-title>Add Test</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
         <v-list-tile @click="delete_all()">
           <v-list-tile-content>
             <v-list-tile-title>Delete All</v-list-tile-title>
@@ -92,12 +87,6 @@ export default {
       await this.db.data.where('no').equals(id).delete()
       await this.db.notes.where('id').equals(id).delete()
       this.update_file_list()
-    },
-    add_test () {
-      /* テスト用:notesにアイテムを追加 */
-      this.db.notes.add(
-        {title:'TestAdd', subtitle:'Jan 21, 2019'}
-      )
     },
     async update_file_list() {
       /* ファイルリストの更新 */
