@@ -64,6 +64,7 @@
 
 <script>
 import moment from 'moment'
+import NoSleep from 'nosleep.js'
 export default{
   data () {
     return {
@@ -83,7 +84,8 @@ export default{
       quaternion: [0.0,0.0,0.0,0.0],
       position: null,  // GeoLocationAPIのID
       lat: 0.0,
-      lon: 0.0
+      lon: 0.0,
+      lock: new NoSleep()
     }
   },
   methods: {
@@ -121,6 +123,7 @@ export default{
     async toggle_recording() {
       if(this.record !== 0){
         console.log('Start Recording!')
+        this.lock.enable()  // スリープさせないようにする
         let now = new Date()
         let now_str = moment(now).format('YYYY/MM/DD HH:mm:ss')
         this.db.notes.add({
@@ -139,6 +142,8 @@ export default{
           navigator.geolocation.clearWatch(this.position)
           this.position = null
         }
+        this.lock.disable() // ノースリープを解除
+        this.lock = null
       }
     },
     async add_data() {
@@ -227,6 +232,9 @@ export default{
     this.absoluteorient.start()
 
     this.get_position()
+  },
+  beforeDestroy() {
+    this.lock.disable()
   }
 }
 </script>
