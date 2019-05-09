@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/ltapp/precache-manifest.bf84692af2866c837263087b3ff60913.js"
+  "/ltapp/precache-manifest.1726a74e6261de21203f83b1cf11060f.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "ltapp"});
