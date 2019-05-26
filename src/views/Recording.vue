@@ -65,6 +65,11 @@
 <script>
 import moment from 'moment'
 import NoSleep from 'nosleep.js'
+import ndarray from 'ndarray'
+import show from 'ndarray-show'
+import linspace from 'ndarray-linspace'
+import fft from 'ndarray-fft'
+import ops from 'ndarray-ops'
 export default{
   data () {
     return {
@@ -232,6 +237,14 @@ export default{
     this.absoluteorient.start()
 
     this.get_position()
+
+    let t = linspace(ndarray([], [256]), 0, 2 * 3.141592)
+    let y = ndarray(new Float32Array(256*1))
+    ops.mulseq(t, 100 * 3.141592)
+    ops.sineq(t)
+    console.log(show(t))
+    fft(1, t, y)
+    console.log(show(y))
   },
   beforeDestroy() {
     this.lock.disable()

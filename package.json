@@ -13,6 +13,9 @@
   "dependencies": {
     "dexie": "^2.0.4",
     "moment": "^2.24.0",
+    "ndarray-fft": "^1.0.3",
+    "ndarray-linspace": "^2.0.3",
+    "ndarray-show": "^2.0.0",
     "nosleep.js": "^0.9.0",
     "register-service-worker": "^1.5.2",
     "vue": "^2.5.22",
