@@ -238,12 +238,12 @@ export default{
 
     this.get_position()
 
-    let t = linspace(ndarray([], [256]), 0, 2 * 3.141592)
-    let y = ndarray(new Float32Array(256*1))
-    ops.mulseq(t, 100 * 3.141592)
+    let t = linspace(ndarray([], [1024]), 0, 1.0)
+    let y = ndarray(new Float32Array(1024*1))
+    ops.mulseq(t, 2 * 3.141592 * 50)
     ops.sineq(t)
     console.log(show(t))
-    fft(1, t, y)
+    fft(-1, t, y)
     console.log(show(y))
   },
   beforeDestroy() {
