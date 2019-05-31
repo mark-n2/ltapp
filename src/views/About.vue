@@ -16,7 +16,7 @@
             <v-card-title>LT App</v-card-title>
             <v-card-text>
               このアプリは、輸送機器の乗り心地を測定するためのものです。<br>
-              現状、加速度/ジャイロセンサ値を計測し保存する機能しかありません。
+              現状、横方向(X)のみLTを計算する機能があります。
             </v-card-text>
           </v-card>
         </v-card>
